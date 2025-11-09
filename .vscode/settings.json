@@ -1,0 +1,21 @@
+{
+    "prettier.configPath": ".prettierrc",
+    "prettier.requireConfig": false,
+    "prettier.enable": true,
+    "jest.autoRun": "off",
+    "jest.rootPath": ".",
+    "jest.testExplorer.testCommandLine": "node scripts/jest-test-runner.js",
+    "jest.jestCommandLine": "node scripts/jest-test-runner.js",
+    "jest.testExplorer": {
+        "enabled": true,
+        "showCoverageOnLoad": false
+    },
+    "jest.disabledWorkspaceFolders": [],
+    "jest.pathToJest": "node scripts/jest-test-runner.js",
+    "jest.runMode": "on-demand",
+    "jest.nodeEnv": {
+        "CI": "true"
+    },
+    "jest.enable": true,
+    "jest.showCoverageOnLoad": false
+}
