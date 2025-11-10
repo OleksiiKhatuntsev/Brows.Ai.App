@@ -10,7 +10,9 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({ error }) => {
     }
 
     return (
-        <div style={{ color: 'red', marginTop: '20px' }}>Error: {error}</div>
+        <div className='alert alert-danger mt-4' role='alert'>
+            <strong>Error:</strong> {error}
+        </div>
     );
 };
 

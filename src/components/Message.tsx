@@ -11,133 +11,67 @@ const Message: React.FC<MessageProps> = ({ result }) => {
     }
 
     return (
-        <div style={{ marginTop: '20px', width: '100%' }}>
-            <label
-                style={{
-                    display: 'block',
-                    textAlign: 'left',
-                    marginBottom: '8px',
-                    fontWeight: 'bold',
-                    fontSize: '18px',
-                }}
-            >
+        <div className='mt-4 w-100'>
+            <label className='d-block text-start mb-2 fw-bold fs-5'>
                 Response:
             </label>
-            <div
-                style={{
-                    width: '100%',
-                    padding: '20px',
-                    fontSize: '16px',
-                    borderRadius: '8px',
-                    border: '1px solid #ccc',
-                    backgroundColor: '#f9f9f9',
-                    fontFamily: 'inherit',
-                    lineHeight: '1.6',
-                    maxHeight: '600px',
-                    overflowY: 'auto',
-                    color: '#333',
-                    textAlign: 'left',
-                }}
-            >
-                <ReactMarkdown
-                    components={{
-                        h1: ({ node, ...props }) => (
-                            <h1
-                                style={{
-                                    fontSize: '24px',
-                                    fontWeight: 'bold',
-                                    marginBottom: '12px',
-                                    marginTop: '16px',
-                                    color: '#222',
-                                }}
-                                {...props}
-                            />
-                        ),
-                        h2: ({ node, ...props }) => (
-                            <h2
-                                style={{
-                                    fontSize: '20px',
-                                    fontWeight: 'bold',
-                                    marginBottom: '10px',
-                                    marginTop: '14px',
-                                    color: '#222',
-                                }}
-                                {...props}
-                            />
-                        ),
-                        h3: ({ node, ...props }) => (
-                            <h3
-                                style={{
-                                    fontSize: '18px',
-                                    fontWeight: 'bold',
-                                    marginBottom: '8px',
-                                    marginTop: '12px',
-                                    color: '#222',
-                                }}
-                                {...props}
-                            />
-                        ),
-                        p: ({ node, ...props }) => (
-                            <p
-                                style={{ marginBottom: '12px', color: '#333' }}
-                                {...props}
-                            />
-                        ),
-                        ul: ({ node, ...props }) => (
-                            <ul
-                                style={{
-                                    marginLeft: '20px',
-                                    marginBottom: '12px',
-                                    listStyleType: 'disc',
-                                    color: '#333',
-                                }}
-                                {...props}
-                            />
-                        ),
-                        ol: ({ node, ...props }) => (
-                            <ol
-                                style={{
-                                    marginLeft: '20px',
-                                    marginBottom: '12px',
-                                    color: '#333',
-                                }}
-                                {...props}
-                            />
-                        ),
-                        li: ({ node, ...props }) => (
-                            <li
-                                style={{ marginBottom: '6px', color: '#333' }}
-                                {...props}
-                            />
-                        ),
-                        strong: ({ node, ...props }) => (
-                            <strong
-                                style={{ fontWeight: 'bold', color: '#222' }}
-                                {...props}
-                            />
-                        ),
-                        em: ({ node, ...props }) => (
-                            <em
-                                style={{ fontStyle: 'italic', color: '#333' }}
-                                {...props}
-                            />
-                        ),
-                        code: ({ node, ...props }) => (
-                            <code
-                                style={{
-                                    backgroundColor: '#e8e8e8',
-                                    padding: '2px 6px',
-                                    borderRadius: '3px',
-                                    fontSize: '14px',
-                                    color: '#d63384',
-                                }}
-                                {...props}
-                            />
-                        ),
-                    }}
+            <div className='card'>
+                <div
+                    className='card-body bg-light text-dark'
+                    style={{ maxHeight: '600px', overflowY: 'auto' }}
                 >
-                    {result}
-                </ReactMarkdown>
+                    <ReactMarkdown
+                        components={{
+                            h1: ({ node, ...props }) => (
+                                <h1
+                                    className='h4 fw-bold mb-3 mt-3 text-dark'
+                                    {...props}
+                                />
+                            ),
+                            h2: ({ node, ...props }) => (
+                                <h2
+                                    className='h5 fw-bold mb-2 mt-3 text-dark'
+                                    {...props}
+                                />
+                            ),
+                            h3: ({ node, ...props }) => (
+                                <h3
+                                    className='h6 fw-bold mb-2 mt-2 text-dark'
+                                    {...props}
+                                />
+                            ),
+                            p: ({ node, ...props }) => (
+                                <p className='mb-3 text-secondary' {...props} />
+                            ),
+                            ul: ({ node, ...props }) => (
+                                <ul className='ms-4 mb-3' {...props} />
+                            ),
+                            ol: ({ node, ...props }) => (
+                                <ol className='ms-4 mb-3' {...props} />
+                            ),
+                            li: ({ node, ...props }) => (
+                                <li className='mb-2' {...props} />
+                            ),
+                            strong: ({ node, ...props }) => (
+                                <strong
+                                    className='fw-bold text-dark'
+                                    {...props}
+                                />
+                            ),
+                            em: ({ node, ...props }) => (
+                                <em className='fst-italic' {...props} />
+                            ),
+                            code: ({ node, ...props }) => (
+                                <code
+                                    className='bg-light border rounded px-2 py-1 text-danger'
+                                    {...props}
+                                />
+                            ),
+                        }}
+                    >
+                        {result}
+                    </ReactMarkdown>
+                </div>
             </div>
         </div>
     );

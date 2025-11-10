@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ErrorMessage from './ErrorMessage';
 import Message from './Message';
-import { Button, TextInput } from './base-components';
 
 interface Prompt {
     id: string;
@@ -76,58 +75,50 @@ const PromptForm: React.FC = () => {
     };
 
     return (
-        <div
-            style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 5fr',
-                width: '100%',
-                marginTop: '20px',
-                gap: '20px',
-            }}
-        >
-            <div
-                style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '10px',
-                    border: '2px solid red',
-                    padding: '10px',
-                    overflowY: 'auto',
-                    maxHeight: '600px',
-                }}
-            >
-                {prompts.map((promptItem) => (
-                    <Button
-                        key={promptItem.id}
-                        onClick={() => handleSendPrompt(promptItem.body)}
-                        loading={loading}
-                        label={promptItem.title}
-                    />
-                ))}
-            </div>
-            <div
-                style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    padding: '20px',
-                    border: '2px solid blue',
-                }}
-            >
-                <div style={{ marginRight: '20px' }}>
-                    <TextInput
-                        value={prompt}
-                        onChange={setPrompt}
-                        placeholder='Enter your prompt...'
-                        disabled={loading}
-                    />
+        <div className='row mt-4 w-100 g-3'>
+            <div className='col-2'>
+                <div
+                    className='d-flex flex-column gap-2 p-2 overflow-auto'
+                    style={{
+                        border: '2px solid red',
+                        maxHeight: '600px',
+                    }}
+                >
+                    {prompts.map((promptItem) => (
+                        <button
+                            key={promptItem.id}
+                            onClick={() => handleSendPrompt(promptItem.body)}
+                            disabled={loading}
+                            className='btn btn-secondary w-100'
+                        >
+                            {promptItem.title}
+                        </button>
+                    ))}
                 </div>
-                <Button
-                    onClick={() => handleSendPrompt()}
-                    loading={loading}
-                    label='Send Prompt'
-                />
-                <ErrorMessage error={error} />
-                <div style={{ marginRight: '20px' }}>
+            </div>
+            <div className='col-10'>
+                <div
+                    className='d-flex flex-column p-3'
+                    style={{ border: '2px solid blue' }}
+                >
+                    <div className='mb-3'>
+                        <textarea
+                            value={prompt}
+                            onChange={(e) => setPrompt(e.target.value)}
+                            placeholder='Enter your prompt...'
+                            disabled={loading}
+                            className='form-control'
+                            rows={4}
+                        />
+                    </div>
+                    <button
+                        onClick={() => handleSendPrompt()}
+                        disabled={loading}
+                        className='btn btn-primary mb-3'
+                    >
+                        {loading ? 'Loading...' : 'Send Prompt'}
+                    </button>
+                    <ErrorMessage error={error} />
                     <Message result={result} />
                 </div>
             </div>

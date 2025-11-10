@@ -5,7 +5,9 @@ function App() {
     return (
         <div className='App'>
             <header className='App-header'>
-                <PromptForm />
+                <div className='container-fluid'>
+                    <PromptForm />
+                </div>
             </header>
         </div>
     );
