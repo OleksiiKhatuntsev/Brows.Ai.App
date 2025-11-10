@@ -1,13 +1,42 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ErrorMessage from './ErrorMessage';
 import Message from './Message';
 import { Button, TextInput } from './base-components';
+
+interface Prompt {
+    id: string;
+    title: string;
+    body: string;
+}
 
 const PromptForm: React.FC = () => {
     const [prompt, setPrompt] = useState<string>('');
     const [result, setResult] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
+    const [prompts, setPrompts] = useState<Prompt[]>([]);
+
+    useEffect(() => {
+        const fetchPrompts = async () => {
+            try {
+                const response = await fetch(
+                    'http://localhost:5271/Ai/GetAllPrompts'
+                );
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                setPrompts(data);
+            } catch (err) {
+                console.error('Failed to fetch prompts:', err);
+                setError('Failed to load prompts from database');
+            }
+        };
+
+        fetchPrompts();
+    }, []);
 
     const handleSendPrompt = async (promptText?: string) => {
         const promptToSend = promptText ?? prompt;
@@ -29,7 +58,7 @@ const PromptForm: React.FC = () => {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ prompt: promptToSend.trim() }),
+                    body: JSON.stringify({ body: promptToSend.trim() }),
                 }
             );
 
@@ -62,13 +91,19 @@ const PromptForm: React.FC = () => {
                     flexDirection: 'column',
                     gap: '10px',
                     border: '2px solid red',
+                    padding: '10px',
+                    overflowY: 'auto',
+                    maxHeight: '600px',
                 }}
             >
-                <Button
-                    onClick={() => handleSendPrompt('Hello')}
-                    loading={loading}
-                    label='Send Hello'
-                />
+                {prompts.map((promptItem) => (
+                    <Button
+                        key={promptItem.id}
+                        onClick={() => handleSendPrompt(promptItem.body)}
+                        loading={loading}
+                        label={promptItem.title}
+                    />
+                ))}
             </div>
             <div
                 style={{
@@ -92,7 +127,9 @@ const PromptForm: React.FC = () => {
                     label='Send Prompt'
                 />
                 <ErrorMessage error={error} />
-                <Message result={result} />
+                <div style={{ marginRight: '20px' }}>
+                    <Message result={result} />
+                </div>
             </div>
         </div>
     );

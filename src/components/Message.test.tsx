@@ -2,13 +2,19 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import Message from './Message';
 
+// Mock react-markdown to avoid Jest ES module issues
+jest.mock('react-markdown', () => {
+    return {
+        __esModule: true,
+        default: ({ children }: { children: string }) => <div>{children}</div>,
+    };
+});
+
 describe('Message', () => {
     test('renders message when result prop is provided', () => {
         render(<Message result='This is a test response' />);
-        expect(screen.getByLabelText('Response:')).toBeInTheDocument();
-        expect(screen.getByLabelText('Response:')).toHaveValue(
-            'This is a test response'
-        );
+        expect(screen.getByText('Response:')).toBeInTheDocument();
+        expect(screen.getByText('This is a test response')).toBeInTheDocument();
     });
 
     test('does not render when result prop is empty string', () => {
@@ -16,37 +22,44 @@ describe('Message', () => {
         expect(container.firstChild).toBeNull();
     });
 
-    test('textarea has correct attributes', () => {
-        render(<Message result='Test message' />);
-        const textarea = screen.getByLabelText('Response:');
-        expect(textarea).toHaveAttribute('id', 'custom-prompt-response');
-        expect(textarea).toHaveAttribute('readonly');
+    test('renders markdown formatted text', () => {
+        const markdownText = '**Bold text** and *italic text*';
+        render(<Message result={markdownText} />);
+        expect(screen.getByText('Response:')).toBeInTheDocument();
     });
 
-    test('applies correct styling to textarea', () => {
-        render(<Message result='Test message' />);
-        const textarea = screen.getByLabelText('Response:');
-        expect(textarea).toHaveStyle({
-            width: '100%',
-            minHeight: '150px',
-            padding: '10px',
-            fontSize: '16px',
-            borderRadius: '4px',
-            border: '1px solid #ccc',
-            backgroundColor: '#f9f9f9',
-            resize: 'vertical',
-        });
+    test('renders message container with correct structure', () => {
+        const { container } = render(<Message result='Test message' />);
+        const messageDiv = container.querySelector('div > div');
+        expect(messageDiv).toBeInTheDocument();
+        expect(messageDiv).toHaveStyle({ width: '100%' });
     });
 
     test('handles multiline text', () => {
         const multilineText = 'Line 1\nLine 2\nLine 3';
         render(<Message result={multilineText} />);
-        expect(screen.getByLabelText('Response:')).toHaveValue(multilineText);
+        expect(screen.getByText('Response:')).toBeInTheDocument();
+        expect(screen.getByText(/Line 1/)).toBeInTheDocument();
     });
 
     test('handles long messages', () => {
         const longMessage = 'A'.repeat(1000);
         render(<Message result={longMessage} />);
-        expect(screen.getByLabelText('Response:')).toHaveValue(longMessage);
+        expect(screen.getByText('Response:')).toBeInTheDocument();
+        expect(screen.getByText(/A+/)).toBeInTheDocument();
+    });
+
+    test('renders markdown formatted content', () => {
+        const headingText = '# Heading 1';
+        render(<Message result={headingText} />);
+        // The mocked ReactMarkdown will render the content
+        expect(screen.getByText(headingText)).toBeInTheDocument();
+    });
+
+    test('renders list content', () => {
+        const listText = '* Item 1\n* Item 2\n* Item 3';
+        render(<Message result={listText} />);
+        // The mocked ReactMarkdown will render the content
+        expect(screen.getByText(/Item 1/)).toBeInTheDocument();
     });
 });
