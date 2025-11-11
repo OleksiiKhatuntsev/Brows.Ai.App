@@ -3,6 +3,14 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { PromptForm } from './index';
 
+// Mock react-markdown to avoid Jest ES module issues
+jest.mock('react-markdown', () => {
+    return {
+        __esModule: true,
+        default: ({ children }: { children: string }) => <div>{children}</div>,
+    };
+});
+
 describe('PromptForm', () => {
     const mockFetch = jest.fn();
     let originalFetch: typeof fetch | undefined;
@@ -14,6 +22,11 @@ describe('PromptForm', () => {
 
     beforeEach(() => {
         mockFetch.mockReset();
+        // Mock the initial fetch for prompts that happens on component mount
+        mockFetch.mockResolvedValueOnce({
+            ok: true,
+            json: jest.fn().mockResolvedValue([]),
+        } as unknown as Response);
     });
 
     afterAll(() => {
@@ -22,7 +35,7 @@ describe('PromptForm', () => {
 
     test('submits prompt and displays response text', async () => {
         const mockResponseText = 'Here is a joke.';
-        mockFetch.mockResolvedValue({
+        mockFetch.mockResolvedValueOnce({
             ok: true,
             text: jest.fn().mockResolvedValue(mockResponseText),
         } as unknown as Response);
@@ -30,26 +43,26 @@ describe('PromptForm', () => {
         render(<PromptForm />);
 
         const promptInput = screen.getByPlaceholderText('Enter your prompt...');
-        userEvent.type(promptInput, 'tell me a joke');
+        await userEvent.type(promptInput, 'tell me a joke');
 
         const submitButton = screen.getByRole('button', {
             name: 'Send Prompt',
         });
-        userEvent.click(submitButton);
+        await userEvent.click(submitButton);
 
         expect(mockFetch).toHaveBeenCalledWith(
             'http://localhost:5271/Ai/GetCustomResponse',
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompt: 'tell me a joke' }),
+                body: JSON.stringify({ body: 'tell me a joke' }),
             }
         );
 
-        const responseTextarea = await screen.findByLabelText('Response:');
-        await waitFor(() =>
-            expect(responseTextarea).toHaveDisplayValue(mockResponseText)
-        );
+        await waitFor(() => {
+            expect(screen.getByText('Response:')).toBeInTheDocument();
+            expect(screen.getByText(mockResponseText)).toBeInTheDocument();
+        });
     });
 
     test('shows validation error when prompt is empty', async () => {
@@ -58,16 +71,17 @@ describe('PromptForm', () => {
         const submitButton = screen.getByRole('button', {
             name: 'Send Prompt',
         });
-        userEvent.click(submitButton);
+        await userEvent.click(submitButton);
 
-        expect(mockFetch).not.toHaveBeenCalled();
+        // Only the initial prompts fetch should have been called, not the submit
+        expect(mockFetch).toHaveBeenCalledTimes(1);
         expect(
-            await screen.findByText('Error: Please enter a prompt')
+            await screen.findByText(/Please enter a prompt/)
         ).toBeInTheDocument();
     });
 
     test('shows error message when request fails', async () => {
-        mockFetch.mockResolvedValue({
+        mockFetch.mockResolvedValueOnce({
             ok: false,
             status: 500,
         } as unknown as Response);
@@ -75,16 +89,16 @@ describe('PromptForm', () => {
         render(<PromptForm />);
 
         const promptInput = screen.getByPlaceholderText('Enter your prompt...');
-        userEvent.type(promptInput, 'tell me a joke');
+        await userEvent.type(promptInput, 'tell me a joke');
 
         const submitButton = screen.getByRole('button', {
             name: 'Send Prompt',
         });
-        userEvent.click(submitButton);
+        await userEvent.click(submitButton);
 
         expect(mockFetch).toHaveBeenCalled();
-        expect(
-            await screen.findByText('Error: HTTP error! status: 500')
-        ).toBeInTheDocument();
+        await waitFor(() => {
+            expect(screen.getByText(/HTTP error! status: 500/)).toBeInTheDocument();
+        });
     });
 });

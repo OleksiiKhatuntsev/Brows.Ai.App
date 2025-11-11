@@ -30,9 +30,13 @@ describe('Message', () => {
 
     test('renders message container with correct structure', () => {
         const { container } = render(<Message result='Test message' />);
-        const messageDiv = container.querySelector('div > div');
-        expect(messageDiv).toBeInTheDocument();
-        expect(messageDiv).toHaveStyle({ width: '100%' });
+        const messageContainer = container.querySelector('.mt-4.w-100');
+        expect(messageContainer).toBeInTheDocument();
+        expect(messageContainer).toHaveClass('mt-4', 'w-100');
+
+        const cardBody = container.querySelector('.card-body');
+        expect(cardBody).toBeInTheDocument();
+        expect(cardBody).toHaveStyle({ maxHeight: '600px', overflowY: 'auto' });
     });
 
     test('handles multiline text', () => {
