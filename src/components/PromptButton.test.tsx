@@ -1,10 +1,11 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import PromptButton from './PromptButton';
 
 describe('PromptButton', () => {
-    const mockOnClick = jest.fn();
+    const mockOnClick = vi.fn();
     const defaultProps = {
         id: 'test-id-123',
         title: 'Test Prompt Title',
@@ -17,14 +18,14 @@ describe('PromptButton', () => {
         mockOnClick.mockClear();
     });
 
-    test('renders button with correct title', () => {
+    it('renders button with correct title', () => {
         render(<PromptButton {...defaultProps} />);
 
         const button = screen.getByRole('button', { name: 'Test Prompt Title' });
         expect(button).toBeInTheDocument();
     });
 
-    test('applies unselected styling when isSelected is false', () => {
+    it('applies unselected styling when isSelected is false', () => {
         render(<PromptButton {...defaultProps} isSelected={false} />);
 
         const button = screen.getByRole('button');
@@ -32,7 +33,7 @@ describe('PromptButton', () => {
         expect(button).not.toHaveClass('btn-primary');
     });
 
-    test('applies selected styling when isSelected is true', () => {
+    it('applies selected styling when isSelected is true', () => {
         render(<PromptButton {...defaultProps} isSelected={true} />);
 
         const button = screen.getByRole('button');
@@ -40,7 +41,7 @@ describe('PromptButton', () => {
         expect(button).not.toHaveClass('btn-secondary');
     });
 
-    test('calls onClick with correct parameters when clicked', async () => {
+    it('calls onClick with correct parameters when clicked', async () => {
         render(<PromptButton {...defaultProps} />);
 
         const button = screen.getByRole('button');
@@ -54,7 +55,7 @@ describe('PromptButton', () => {
         );
     });
 
-    test('handles multiple clicks', async () => {
+    it('handles multiple clicks', async () => {
         render(<PromptButton {...defaultProps} />);
 
         const button = screen.getByRole('button');
@@ -65,14 +66,14 @@ describe('PromptButton', () => {
         expect(mockOnClick).toHaveBeenCalledTimes(3);
     });
 
-    test('applies full width styling', () => {
+    it('applies full width styling', () => {
         render(<PromptButton {...defaultProps} />);
 
         const button = screen.getByRole('button');
         expect(button).toHaveClass('w-100');
     });
 
-    test('renders with different titles', () => {
+    it('renders with different titles', () => {
         const { rerender } = render(
             <PromptButton {...defaultProps} title='First Title' />
         );
@@ -87,7 +88,7 @@ describe('PromptButton', () => {
         expect(screen.queryByText('First Title')).not.toBeInTheDocument();
     });
 
-    test('toggles selected state correctly', () => {
+    it('toggles selected state correctly', () => {
         const { rerender } = render(
             <PromptButton {...defaultProps} isSelected={false} />
         );
@@ -103,7 +104,7 @@ describe('PromptButton', () => {
         expect(button).toHaveClass('btn-primary');
     });
 
-    test('passes all parameters correctly to onClick', async () => {
+    it('passes all parameters correctly to onClick', async () => {
         const customProps = {
             id: 'custom-id-456',
             title: 'Custom Title',
@@ -124,7 +125,7 @@ describe('PromptButton', () => {
         );
     });
 
-    test('handles empty strings in props', async () => {
+    it('handles empty strings in props', async () => {
         const emptyProps = {
             id: '',
             title: '',
@@ -141,7 +142,7 @@ describe('PromptButton', () => {
         expect(mockOnClick).toHaveBeenCalledWith('', '', '');
     });
 
-    test('handles long title text', () => {
+    it('handles long title text', () => {
         const longTitle = 'A'.repeat(100);
         render(<PromptButton {...defaultProps} title={longTitle} />);
 

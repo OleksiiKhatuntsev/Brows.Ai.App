@@ -1,23 +1,24 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import React, { useState } from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TextInput from './TextInput';
 
 describe('TextInput', () => {
-    const mockOnChange = jest.fn();
+    const mockOnChange = vi.fn();
 
     beforeEach(() => {
         mockOnChange.mockClear();
     });
 
-    test('renders textarea with default placeholder', () => {
+    it('renders textarea with default placeholder', () => {
         render(<TextInput value='' onChange={mockOnChange} />);
         const textarea = screen.getByPlaceholderText('Enter your message...');
         expect(textarea).toBeInTheDocument();
         expect(textarea).toHaveValue('');
     });
 
-    test('renders textarea with custom placeholder', () => {
+    it('renders textarea with custom placeholder', () => {
         render(
             <TextInput
                 value=''
@@ -29,13 +30,13 @@ describe('TextInput', () => {
         expect(textarea).toBeInTheDocument();
     });
 
-    test('displays the value prop', () => {
+    it('displays the value prop', () => {
         render(<TextInput value='Test message' onChange={mockOnChange} />);
         const textarea = screen.getByDisplayValue('Test message');
         expect(textarea).toBeInTheDocument();
     });
 
-    test('calls onChange when user types', async () => {
+    it('calls onChange when user types', async () => {
         const TestWrapper = () => {
             const [value, setValue] = useState('');
             return (
@@ -58,7 +59,7 @@ describe('TextInput', () => {
         expect(mockOnChange).toHaveBeenLastCalledWith('Hello');
     });
 
-    test('is disabled when disabled prop is true', () => {
+    it('is disabled when disabled prop is true', () => {
         render(
             <TextInput value='' onChange={mockOnChange} disabled={true} />
         );
@@ -66,7 +67,7 @@ describe('TextInput', () => {
         expect(textarea).toBeDisabled();
     });
 
-    test('is enabled when disabled prop is false', () => {
+    it('is enabled when disabled prop is false', () => {
         render(
             <TextInput value='' onChange={mockOnChange} disabled={false} />
         );
@@ -74,7 +75,7 @@ describe('TextInput', () => {
         expect(textarea).not.toBeDisabled();
     });
 
-    test('is enabled by default when disabled prop is not provided', () => {
+    it('is enabled by default when disabled prop is not provided', () => {
         render(<TextInput value='' onChange={mockOnChange} />);
         const textarea = screen.getByPlaceholderText('Enter your message...');
         expect(textarea).not.toBeDisabled();
